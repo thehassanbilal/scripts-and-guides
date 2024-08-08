@@ -42,8 +42,11 @@ npm install -g pm2
 
 # Install and configure UFW (Uncomplicated Firewall)
 sudo apt install -y ufw
+# Allow SSH connections
 sudo ufw allow ssh
+# Allow Nginx traffic through the firewall
 sudo ufw allow 'Nginx Full'
+# Enable UFW
 sudo ufw enable
 
 # Install Nginx
