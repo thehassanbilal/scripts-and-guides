@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Prompt user for the domain name
+read -p "Enter the domain name (e.g., example.com): " domain
+
+# Function to run commands and check for errors
+run_command() {
+    command="$1"
+    echo "Running command: $command"
+    eval "$command"
+    if [ $? -ne 0 ]; then
+        echo "Error running command: $command"
+        exit 1
+    fi
+}
+
+# Create directory and set permissions
+run_command "sudo mkdir -p /var/www/$domain/html"
+run_command "sudo chown -R \$USER:\$USER /var/www/$domain/html"
+run_command "sudo chmod -R 755 /var/www/$domain"
+
+# Create and configure index.html
+index_html_content="
+<html>
+    <head>
+        <title>Welcome to $domain!</title>
+    </head>
+    <body>
+        <h1>Success! The $domain server block is working!</h1>
+    </body>
+</html>"
+echo "$index_html_content" | sudo tee "/var/www/$domain/html/index.html" > /dev/null
+
+# Create Nginx site configuration
+nginx_config="
+server {
+    listen 80;
+    listen [::]:80;
+
+    root /var/www/$domain/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name $domain www.$domain;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}"
+echo "$nginx_config" | sudo tee "/etc/nginx/sites-available/$domain" > /dev/null
+
+# Enable the Nginx site
+run_command "sudo ln -s /etc/nginx/sites-available/$domain /etc/nginx/sites-enabled/"
+
+# Generate SSL certificates with Certbot
+run_command "sudo certbot --nginx -d $domain -d www.$domain"
+
+echo "Setup complete."
