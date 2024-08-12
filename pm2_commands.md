@@ -107,4 +107,16 @@ Here is the complete markdown file content that you can copy and save as `pm2_co
   ```bash
   pm2 help
   ```
+
+## Deployment Commands
+
+- **Run NestJS:**
+  ```bash
+  pm2 start npm --name "api.skillami.codeinprogress.net:5000" -- run "start:prod"
+  ```
+
+- **Run NextJS:**
+  ```bash
+  pm2 start --name "nextjs-app" -- start
+  ```
 ```
