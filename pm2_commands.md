@@ -120,7 +120,7 @@ Here is the complete markdown file content that you can copy and save as `pm2_co
   pm2 start --name "nextjs-app" -- start
   ```
 
-  - **Run NextJS yarn:**
+- **Run NextJS yarn:**
   ```bash
   pm2 start yarn --name "app-name" -- run start
   ```
