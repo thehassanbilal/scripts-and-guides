@@ -1,66 +1,106 @@
-To integrate **mongo-express** on your Ubuntu server and access it via the subdomain **codeinprogress.net**, you'll need to set up mongo-express with PM2, configure Nginx as a reverse proxy, and secure it with SSL using Certbot. Here are the steps to achieve this:
+Here’s a comprehensive documentation for setting up Mongo Express with PM2 and Nginx, including environment variables for configuration and SSL for secure access:
 
-### Step 1: Install Mongo-Express
+---
 
-1. **Clone the mongo-express repository:**
+# Mongo Express Setup with PM2 and Nginx
+
+## Overview
+
+This documentation provides a step-by-step guide to set up Mongo Express with PM2, Nginx, and SSL to securely manage your MongoDB databases through a web interface.
+
+## Prerequisites
+
+1. **MongoDB**: Installed and running on your server.
+2. **Node.js and npm**: Installed on your server.
+3. **PM2**: Process manager for Node.js applications.
+4. **Nginx**: Web server and reverse proxy.
+5. **Certbot**: Tool for obtaining SSL certificates.
+
+## Installation and Configuration
+
+### 1. Install Mongo Express
+
+1. **Install Mongo Express Globally**:
+
    ```bash
-   git clone https://github.com/mongo-express/mongo-express.git
+   sudo npm install -g mongo-express
    ```
 
-2. **Navigate to the mongo-express directory:**
+   Alternatively, you can install it locally in your project directory:
+
    ```bash
-   cd mongo-express
+   mkdir /sites/mongo-express
+   cd /sites/mongo-express
+   npm init -y
+   npm install mongo-express
    ```
 
-3. **Install dependencies:**
-   ```bash
-   npm install
+2. **Create an `.env` File**:
+
+   Create an `.env` file in your Mongo Express directory (e.g., `/sites/mongo-express`) with the following content:
+
+   ```dotenv
+   ME_CONFIG_BASICAUTH=true
+   ME_CONFIG_BASICAUTH_USERNAME=softbuilders
+   ME_CONFIG_BASICAUTH_PASSWORD=Softbuilders@2024
+   ME_CONFIG_SITE_SESSIONSECRET=softbuilders
+   ME_CONFIG_MONGODB_URL=mongodb://127.0.0.1:27017
+   ME_CONFIG_MONGODB_ENABLE_ADMIN=true
    ```
 
-4. **Configure mongo-express:**
-   - Copy the default configuration file and edit it:
-     ```bash
-     cp config.default.js config.js
-     ```
-   - Open `config.js` and configure your MongoDB connection string and authentication settings. For example:
-     ```javascript
-     module.exports = {
-       mongodb: {
-         url: 'mongodb://username:password@localhost:27017/admin',
-       },
-       site: {
-         baseUrl: 'http://codeinprogress.net',
-         port: 8081,
-       },
-       // Add any additional configuration here
-     };
-     ```
+### 2. Configure PM2
 
-### Step 2: Start Mongo-Express with PM2
+1. **Start Mongo Express with PM2**:
 
-1. **Start mongo-express using PM2:**
+   Navigate to the Mongo Express directory and run:
+
    ```bash
-   pm2 start app.js --name mongo-express
+   pm2 start npm --name "mongodb:8081" -- run start
    ```
 
-2. **Set PM2 to start mongo-express on system boot:**
+   This command will start Mongo Express using the `start` script defined in your `package.json` and apply the configuration from your `.env` file.
+
+2. **Save PM2 Process List**:
+
+   To ensure PM2 restarts Mongo Express after a server reboot, save the process list:
+
    ```bash
    pm2 save
-   pm2 startup
    ```
 
-### Step 3: Configure Nginx
+### 3. Configure Nginx
 
-1. **Create a new Nginx configuration file for the subdomain:**
+1. **Create Nginx Configuration File**:
+
+   Create a new Nginx configuration file for Mongo Express:
+
    ```bash
-   sudo nano /etc/nginx/sites-available/mongo-express
+   sudo nano /etc/nginx/sites-available/mongo.example.com
    ```
 
-2. **Add the following configuration:**
+2. **Add the Following Configuration**:
+
    ```nginx
    server {
        listen 80;
-       server_name codeinprogress.net;
+       server_name mongo.example.com;
+
+       location / {
+           proxy_pass http://localhost:8081;  # Default Mongo Express port
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection 'upgrade';
+           proxy_set_header Host $host;
+           proxy_cache_bypass $http_upgrade;
+       }
+   }
+
+   server {
+       listen 443 ssl;
+       server_name mongo.example.com;
+
+       ssl_certificate /etc/letsencrypt/live/mongo.example.com/fullchain.pem;
+       ssl_certificate_key /etc/letsencrypt/live/mongo.example.com/privkey.pem;
 
        location / {
            proxy_pass http://localhost:8081;
@@ -71,42 +111,75 @@ To integrate **mongo-express** on your Ubuntu server and access it via the subdo
            proxy_cache_bypass $http_upgrade;
        }
    }
+
+   server {
+       listen 80;
+       server_name mongo.example.com;
+       return 301 https://$server_name$request_uri;
+   }
    ```
 
-3. **Enable the configuration by creating a symlink:**
+3. **Enable the Nginx Configuration**:
+
+   Create a symbolic link to enable the site:
+
    ```bash
-   sudo ln -s /etc/nginx/sites-available/mongo-express /etc/nginx/sites-enabled/
+   sudo ln -s /etc/nginx/sites-available/mongo.example.com /etc/nginx/sites-enabled/
    ```
 
-4. **Test the Nginx configuration and reload:**
+4. **Test and Restart Nginx**:
+
+   Test the Nginx configuration for syntax errors:
+
    ```bash
    sudo nginx -t
-   sudo systemctl reload nginx
    ```
 
-### Step 4: Secure with SSL using Certbot
+   Restart Nginx to apply the changes:
 
-1. **Install Certbot if you haven't already:**
    ```bash
-   sudo apt update
-   sudo apt install certbot python3-certbot-nginx
+   sudo systemctl restart nginx
    ```
 
-2. **Obtain and install an SSL certificate:**
+### 4. Configure SSL with Certbot
+
+1. **Obtain SSL Certificates**:
+
+   Use Certbot to obtain and install SSL certificates:
+
    ```bash
-   sudo certbot --nginx -d codeinprogress.net
+   sudo certbot --nginx -d mongo.example.com
    ```
 
-3. **Follow the prompts to complete the SSL setup. Certbot will automatically configure Nginx to use SSL.
+2. **Verify SSL Configuration**:
 
-### Step 5: Verify the Setup
+   Ensure that SSL is properly configured and working by visiting `https://mongo.example.com`.
 
-1. **Open your browser and navigate to** `https://codeinprogress.net`.
-2. **Log in using the credentials you set in the mongo-express configuration.**
+## Accessing Mongo Express
 
-### Additional Security
+1. **Open a Web Browser** and navigate to `https://mongo.example.com`.
+2. **Authenticate** with the username `softbuilders` and the password `Softbuilders@2024`.
 
-- Consider restricting access to mongo-express using basic authentication or by allowing only certain IP addresses.
-- Regularly update your software to ensure security patches are applied.
+## Troubleshooting
 
-This setup will allow you to securely access your MongoDB databases using mongo-express from the subdomain **codeinprogress.net** with the credentials you configured. Let me know if you need any further assistance!
+- **PM2 Logs**: Check logs if Mongo Express does not start:
+
+  ```bash
+  pm2 logs mongodb:8081
+  ```
+
+- **Nginx Logs**: Check Nginx error logs if you encounter issues with the web interface:
+
+  ```bash
+  sudo tail -f /var/log/nginx/error.log
+  ```
+
+## Security Considerations
+
+- **Strong Passwords**: Use strong passwords for Mongo Express and MongoDB authentication.
+- **Network Security**: Restrict access to Mongo Express to trusted IPs or networks if needed.
+- **Regular Updates**: Keep Mongo Express, PM2, and Nginx updated to patch security vulnerabilities.
+
+---
+
+This documentation covers the entire process for setting up Mongo Express with PM2 and Nginx, ensuring secure access through HTTPS.
