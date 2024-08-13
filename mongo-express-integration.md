@@ -1,5 +1,3 @@
-If you've cloned a repository for Mongo Express instead of installing it, you'll need to follow a slightly different set of instructions to set up and run Mongo Express. Here’s a revised guide for running Mongo Express from a cloned repository:
-
 ---
 
 # Mongo Express Setup from a Cloned Repository
