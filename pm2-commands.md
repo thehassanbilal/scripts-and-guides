@@ -119,21 +119,4 @@ Here is the complete markdown file content that you can copy and save as `pm2_co
   ```bash
   pm2 help
   ```
-
-## Deployment Commands
-
-- **Run NestJS:**
-  ```bash
-  pm2 start npm --name "app-name" -- run "start:prod"
-  ```
-
-- **Run NextJS npm:**
-  ```bash
-  pm2 start --name "nextjs-app" -- start
-  ```
-
-- **Run NextJS yarn:**
-  ```bash
-  pm2 start yarn --name "app-name" -- run start
-  ```
 ```
