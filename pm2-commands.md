@@ -11,8 +11,20 @@ Here is the complete markdown file content that you can copy and save as `pm2_co
   ```
 
 - **Start the application with a specific environment:**
+
+- **Run NestJS:**
   ```bash
-  pm2 start app.js --name "mern-app" --env production
+  pm2 start npm --name "app-name" -- run "start:prod"
+  ```
+
+- **Run NextJS npm:**
+  ```bash
+  pm2 start --name "nextjs-app" -- start
+  ```
+
+- **Run NextJS yarn:**
+  ```bash
+  pm2 start yarn --name "app-name" -- run start
   ```
 
 - **Start the application with clustering mode (automatic load balancing):**
