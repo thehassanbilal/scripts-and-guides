@@ -10,31 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Determine Node.js version
-        id: node-version
-        run: echo "NODE_VERSION=$(node -v | tr -d 'v')" >> $GITHUB_ENV
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # Step 2: Set up SSH agent and key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Install dependencies
-        run: yarn install
-
+      # Step 4: Deploy to server via SSH key
       - name: Deploy to server
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no root@app.domain.com << 'EOF'
-            cd /sites/app.domain.com
-            git pull origin main
-            yarn install
+          set -e
+          ssh -o StrictHostKeyChecking=no hassanbilalchannel@influencer.skillami.codeinprogress.net << 'EOF'
+            cd /sites/influencer.skillami.com
+            sudo git pull origin main
+            sudo yarn install
+            sudo yarn build
             pm2 restart all
           EOF
+#
