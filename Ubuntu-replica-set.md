@@ -166,5 +166,3 @@ You have successfully set up a MongoDB replica set on your local machine. Use th
 ```
 
 ---
-
-You can modify this guide to fit your exact needs. Let me know if you'd like any changes or additions!
