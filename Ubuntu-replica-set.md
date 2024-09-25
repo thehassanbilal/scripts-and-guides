@@ -1,5 +1,3 @@
-Here's a detailed guide in `.md` format that you can save and use whenever you need to set up a MongoDB replica set in the future.
-
 ```markdown
 # MongoDB Replica Set Setup Guide
 
