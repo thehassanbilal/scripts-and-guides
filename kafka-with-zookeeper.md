@@ -1,4 +1,3 @@
-Here’s the updated `.md` file content with additional details on setting up permissions and configuring `systemctl`:
 
 ### Setup Kafka and Zookeeper - Step-by-Step Process
 
