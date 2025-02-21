@@ -55,7 +55,7 @@ replication:
 Each MongoDB instance needs its own directories for data storage and log files:
 
 ```bash
-sudo mkdir -p /var/log/mongodb /var/lib/mongodb2 /var/lib/mongodb3
+sudo mkdir -p /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
 ```
 
 Set the correct permissions for these directories:
