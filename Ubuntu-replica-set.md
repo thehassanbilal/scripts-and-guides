@@ -149,15 +149,6 @@ Failed to unlink socket file /tmp/mongodb-27017.sock
 If you see permission-related errors (like `Permission denied`), ensure that the necessary directories and files have the correct permissions:
 
 ```bash
-sudo chown -R mongodb:mongodb /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
-sudo chmod -R 755 /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
-```
-
-### Error: `WiredTiger error: [WT_VERB_DEFAULT][ERROR]`
-
-This can happen if MongoDB does not have permission to access the `WiredTiger` files. Fix the permissions:
-
-```bash
 sudo chown -R mongodb:mongodb /var/lib/mongodb
 sudo chown -R mongodb:mongodb /var/lib/mongodb2
 sudo chown -R mongodb:mongodb /var/lib/mongodb3
@@ -168,7 +159,6 @@ sudo chmod -R 755 /var/lib/mongodb
 sudo chmod -R 755 /var/lib/mongodb2
 sudo chmod -R 755 /var/lib/mongodb3
 ```
----
 
 ## Stopping the Replica Set
 
