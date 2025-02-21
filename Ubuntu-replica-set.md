@@ -61,8 +61,15 @@ sudo mkdir -p /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
 Set the correct permissions for these directories:
 
 ```bash
-sudo chown -R mongodb:mongodb /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
-sudo chmod -R 755 /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
+sudo chown -R mongodb:mongodb /var/lib/mongodb
+sudo chown -R mongodb:mongodb /var/lib/mongodb2
+sudo chown -R mongodb:mongodb /var/lib/mongodb3
+```
+
+```bash
+sudo chmod -R 755 /var/lib/mongodb
+sudo chmod -R 755 /var/lib/mongodb2
+sudo chmod -R 755 /var/lib/mongodb3
 ```
 
 ### 4. Start MongoDB Instances
