@@ -1,4 +1,3 @@
-markdown
 # MongoDB Replica Set Setup Guide
 
 This guide provides instructions on setting up a MongoDB replica set on a single machine, with each instance running on different ports.
