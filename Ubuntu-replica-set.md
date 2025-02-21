@@ -1,4 +1,4 @@
-```markdown
+markdown
 # MongoDB Replica Set Setup Guide
 
 This guide provides instructions on setting up a MongoDB replica set on a single machine, with each instance running on different ports.
@@ -8,8 +8,6 @@ This guide provides instructions on setting up a MongoDB replica set on a single
 - **MongoDB Installed** (e.g., version 7.0.14).
 - **Root or Sudo Access** for managing services and permissions.
 - Basic knowledge of **MongoDB** and **Linux commands**.
-
----
 
 ## Step-by-Step Setup
 
