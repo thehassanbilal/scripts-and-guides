@@ -145,7 +145,8 @@ Failed to unlink socket file /tmp/mongodb-27017.sock
 If you see permission-related errors (like `Permission denied`), ensure that the necessary directories and files have the correct permissions:
 
 ```bash
-sudo chown -R mongodb:mongodb /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3 /var/log/mongodb
+sudo chown -R mongodb:mongodb /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
+sudo chmod -R 755 /var/lib/mongodb /var/lib/mongodb2 /var/lib/mongodb3
 ```
 
 ### Error: `WiredTiger error: [WT_VERB_DEFAULT][ERROR]`
